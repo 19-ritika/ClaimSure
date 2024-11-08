@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from components.utilities.uniq_claim_id import generate_unique_claim_id
-from components.dynamoDB import add_claim_to_dynamoDB, get_claims_by_user_id
+from components.dynamoDB import add_claim_to_dynamoDB, get_claims_by_user_id, update_claim_in_dynamoDB, delete_claim_from_dynamoDB
 from components.s3 import upload_file_to_s3, generate_presigned_url
 from werkzeug.utils import secure_filename
 
@@ -57,6 +57,41 @@ def get_claims():
 
         # Return the claims as a JSON response
         return jsonify({"claims": claims}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@claim_routes.route('/update-claim', methods=['POST'])
+def update_claim():
+    data = request.json
+    user_id = data.get('user_id')
+    claim_id = data.get('claim_id')
+    claim_title = data.get('ClaimTitle')  # Fixed to match client JSON
+    claim_type = data.get('ClaimType')
+    claim_details = data.get('ClaimDetails')
+
+    if not all([user_id, claim_id, claim_title, claim_type, claim_details]):
+        return jsonify({"error": "All fields are required for updating the claim"}), 400
+
+    try:
+        update_claim_in_dynamoDB(user_id, claim_id, claim_title, claim_type, claim_details)
+        return jsonify({'status': 'Claim updated successfully'}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@claim_routes.route('/delete-claim', methods=['DELETE'])
+def delete_claim():
+    user_id = request.args.get('user_id')
+    claim_id = request.args.get('claim_id')
+
+    if not user_id or not claim_id:
+        return jsonify({"error": "User ID and Claim ID are required for deletion"}), 400
+
+    try:
+        delete_claim_from_dynamoDB(user_id, claim_id)
+        return jsonify({'status': 'Claim deleted successfully'}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

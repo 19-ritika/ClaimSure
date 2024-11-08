@@ -59,6 +59,9 @@ def create_app_client(user_pool_id, client_name):
         print(f"Error creating app client: {e}")
         return None
 
+from components.sns import create_sns_topic 
+sns_client = boto3.client('sns', region_name='us-east-1')
+import json
 # Register a user (signup with email and password)
 def register_user(client_id, email, password):
     try:
@@ -69,6 +72,26 @@ def register_user(client_id, email, password):
             UserAttributes=[{'Name': 'email', 'Value': email}],  # Only email attribute
         )
         print(f"User registered successfully: {response}")
+         # After user is registered, subscribe the user to an SNS topic
+        user_sub = response['UserSub']
+        topic_name = "ClaimSubmissionTopic"  # You can define a specific topic name here
+        
+        # Get or create the SNS topic
+        sns_topic_arn = create_sns_topic(topic_name)
+        
+        # Subscribe the user's email to the SNS topic
+        if sns_topic_arn:
+            sns_client.subscribe(
+                TopicArn=sns_topic_arn,
+                Protocol='email',
+                Endpoint=email,  # The user's email
+                Attributes={
+                    'FilterPolicy': json.dumps({
+                        'UserID': [user_sub]  # Filter policy based on the UserSub (UserID)
+                    })
+                }
+            )
+            print(f"User email {email} subscribed to SNS topic: {sns_topic_arn}")
         return {
             'UserSub': response['UserSub'],  # Correct way to access UserSub
             'Username': email  # Use email as the username

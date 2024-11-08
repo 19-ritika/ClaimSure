@@ -3,8 +3,10 @@ from flask_cors import CORS
 from Routes.cognito_routes import cognito_routes
 from Routes.claim_routes import claim_routes
 from components.cognito import create_user_pool, create_app_client
-from components.dynamoDB import create_table  # Import the create_table function
+from components.dynamoDB import create_table, create_event_source_mapping  # Import the create_table function
 from components.s3 import create_s3_bucket
+from components.lambda_fun import create_lambda_function
+from components.sns import create_sns_topic
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -26,7 +28,25 @@ bucket_name = "claimsure-app-bucket-cpp"
 response = create_s3_bucket(bucket_name)
 print(response)
 
-# Register cognito and claim routes
+topic_arn = create_sns_topic("ClaimSubmissionTopic")
+
+# Lambda configuration
+function_name = "claimsure-email-report"
+role_arn = "arn:aws:iam::298550657963:role/LabRole"  # Replace with your IAM role ARN
+handler = "lambda_function.lambda_handler"  # The handler function inside the lambda function
+
+# Create the Lambda function (calls the function from lambda_function.py)
+lambda_response = create_lambda_function(function_name, role_arn, handler)
+if lambda_response:
+    print("Lambda function created successfully.")
+else:
+    print("Failed to create Lambda function.")
+
+create_event_source_mapping("claimsure-email-report", "ClaimsTable")
+
+
+
+# Register Cognito and Claim routes
 app.register_blueprint(cognito_routes, url_prefix='/auth')
 app.register_blueprint(claim_routes, url_prefix='/claims')
 
