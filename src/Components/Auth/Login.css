@@ -1,0 +1,75 @@
+/* Login.css */
+.container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px; /* Limit the width */
+  width: 100%; /* Ensure it takes full width on small screens */
+  margin: 0 auto; /* Center the container horizontally */
+  margin-top: 50px;
+  border: 1px solid black;
+  box-sizing: border-box;
+}
+
+h2 {
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 12px 20px;
+  background-color: #4e73df; /* Soft blue */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button:hover {
+  background-color: #2e59d9;
+}
+
+/* Styling for "Forgot Password?" button */
+.forgot-password {
+  text-align: center;
+  margin-top: 10px;
+}
+
+
+
+
+/* Styling for "Don't have an account? Sign Up" link */
+.signup-link {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.signup-link a {
+  color: #4e73df;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+.message {
+  color: #2ecc71; /* Success green */
+  font-weight: bold;
+  text-align: center;
+}

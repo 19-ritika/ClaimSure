@@ -1,0 +1,40 @@
+/* NaviBar.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2c3e50; /* Dark charcoal gray */
+    color: white;
+  }
+  
+  .logo h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #ffffff;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 15px;
+  }
+  
+  button {
+    padding: 8px 20px; /* Adjust padding for compact buttons */
+    background-color: #4e73df; /* Soft blue */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 20px; /* Smaller font size */
+    white-space: nowrap; /* Prevent line breaks in button text */
+  }
+  
+  button:hover {
+    background-color: #2e59d9; /* Darker blue on hover */
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  

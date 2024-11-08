@@ -1,0 +1,61 @@
+/* SubmitClaim.css */
+.submit-claim-container {
+text-align: center;
+padding: 20px;
+margin-top: 50px;
+}
+
+.submit-claim-btn {
+padding: 15px 25px;
+background: linear-gradient(45deg, #00b09b, #96c93d); /* Green to Blue */
+color: white;
+border: none;
+border-radius: 6px;
+font-size: 24px;
+font-weight: bold;
+cursor: pointer;
+margin-top: 20px;
+}
+
+.submit-claim-btn:hover {
+background-color: #2e59d9;
+}
+
+.claim-form {
+max-width: 400px;
+margin: 0 auto;
+padding: 20px;
+border: 1px solid #ddd;
+border-radius: 8px;
+background-color: #f9f9f9;
+}
+
+.claim-form input, .claim-form select, .claim-form textarea {
+width: 100%;
+padding: 10px;
+margin: 10px 0;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+}
+
+#submitBtn {
+padding: 12px 20px;
+background: linear-gradient(45deg, #00b09b, #96c93d); /* Green to Blue */
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.claim-form button:hover {
+background-color: #2e59d9;
+}
+
+.file-info {
+font-size: 14px;
+color: #666;
+text-align: center;
+margin-top: 5px;
+}
+
