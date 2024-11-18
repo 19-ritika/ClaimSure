@@ -17,6 +17,9 @@ const ManageClaims = () => {
     { value: 'property', label: 'Property' },
   ];
 
+  // Determine the base URL for the backend
+  const baseURL = process.env.REACT_APP_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com');
+
   useEffect(() => {
     const fetchClaims = async () => {
       const userId = localStorage.getItem('user_id');
@@ -27,7 +30,7 @@ const ManageClaims = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/claims/get-claims?user_id=${userId}`);
+        const response = await fetch(`${baseURL}/claims/get-claims?user_id=${userId}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -48,7 +51,7 @@ const ManageClaims = () => {
   const handleDelete = async (claimId) => {
     const userId = localStorage.getItem('user_id');
     try {
-      const response = await fetch(`http://localhost:5000/claims/delete-claim?user_id=${userId}&claim_id=${claimId}`, {
+      const response = await fetch(`${baseURL}/claims/delete-claim?user_id=${userId}&claim_id=${claimId}`, {
         method: 'DELETE'
       });
 
@@ -75,7 +78,7 @@ const ManageClaims = () => {
   const handleSave = async () => {
     const userId = localStorage.getItem('user_id');
     try {
-      const response = await fetch(`http://localhost:5000/claims/update-claim`, {
+      const response = await fetch(`${baseURL}/claims/update-claim`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

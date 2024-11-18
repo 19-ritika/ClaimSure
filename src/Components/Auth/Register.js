@@ -10,11 +10,14 @@ const Register = () => {
   const [userSub, setUserSub] = useState('');  // State to store UserSub
   const [username, setUsername] = useState('');  // State to store Username (email)
 
+  // Determine the base URL for the backend
+  const baseURL = process.env.REACT_APP_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com');
+
   const handleRegister = async (e) => {
     e.preventDefault();
     console.log('Registering:', { email, password });
 
-    const response = await fetch('http://localhost:5000/auth/register', {
+    const response = await fetch(`${baseURL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -11,6 +11,10 @@ const SubmitClaim = () => {
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
+  const BASE_URI = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:5000'
+    : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com';  // Replace with your LB DNS or appropriate URL
+
   // Handle file change
   const handleFileChange = (e) => {
     const newFile = e.target.files[0];
@@ -48,7 +52,7 @@ const SubmitClaim = () => {
 
     try {
       // Submit the claim data and file to the backend
-      const response = await fetch('http://localhost:5000/claims/submit-claim', {
+      const response = await fetch(`${BASE_URI}/claims/submit-claim`, {
         method: 'POST',
         body: formData,  // Do not set 'Content-Type', let the browser handle it
       });

@@ -9,13 +9,16 @@ const Login = () => {
   const [error, setError] = useState('');  // To store any error message
   const navigate = useNavigate();  // Initialize useNavigate hook for redirection
 
+  // Determine the base URL for the backend
+  const baseURL = process.env.REACT_APP_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com');
+
   const handleLogin = async (e) => {
     e.preventDefault();
     console.log('Logging in:', { email, password });
     
     try {
       // Send credentials to the backend for authentication
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch(`${baseURL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +50,6 @@ const Login = () => {
       setMessage('');
     }
   };
-    
 
   return (
     <div className="container">
