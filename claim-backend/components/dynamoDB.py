@@ -1,8 +1,10 @@
 import boto3
 from botocore.exceptions import ClientError
 from datetime import datetime, timezone
-from components.utilities.submission_date import get_submission_date
-from components.utilities.due_date import calculate_due_date
+from claims_lib  import calculate_due_date
+from claims_lib import get_submission_date
+# from components.utilities.submission_date import get_submission_date
+# from components.utilities.due_date import calculate_due_date
 
 # Initialize the DynamoDB client
 dynamodb_client = boto3.client('dynamodb', region_name='us-east-1')  # Adjust the region as needed

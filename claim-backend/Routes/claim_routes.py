@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from components.utilities.uniq_claim_id import generate_unique_claim_id
+from claims_lib import generate_unique_claim_id
 from components.dynamoDB import add_claim_to_dynamoDB, get_claims_by_user_id, update_claim_in_dynamoDB, delete_claim_from_dynamoDB
 from components.s3 import upload_file_to_s3, generate_presigned_url
 from werkzeug.utils import secure_filename

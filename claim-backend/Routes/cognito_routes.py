@@ -14,7 +14,6 @@ user_pool_name = "claimSure-user-pool"
 user_pool_id = create_user_pool(user_pool_name)
 app_client_id = create_app_client(user_pool_id, "my_app_client")
 
-# Register a user (sign-up)
 @cognito_routes.route('/register', methods=['POST'])
 def register():
     try:
@@ -27,23 +26,20 @@ def register():
             return jsonify({"error": "Missing email or password"}), 400
 
         # Register the user using Cognito
-        register_response = register_user(app_client_id, email, password)
+        register_response = register_user(app_client_id, user_pool_id, email, password)
 
-        if register_response:
-            return jsonify({
-                "message": "User registered successfully",
-                "UserSub": register_response['UserSub'],  # Return UserSub
-                "Username": register_response['Username']  # Return Username (email)
-            }), 201
-        else:
-            return jsonify({"error": "User registration failed"}), 500
+        # Check if there was an error in the registration response
+        if 'error' in register_response:
+            return jsonify({"error": register_response['error']}), 500
 
-    except ClientError as e:
-        # More specific error handling for Cognito errors
-        print(f"Cognito error response: {e.response['Error']}")
-        return jsonify({"error": f"Error registering user: {e.response['Error']['Message']}"}), 500
+        # If successful, return user details
+        return jsonify({
+            "message": "User registered successfully",
+            "UserSub": register_response['UserSub'],
+            "Username": register_response['Username']
+        }), 201
+
     except Exception as e:
-        # Catch any other exceptions and log them
         print(f"Error registering user: {str(e)}")
         return jsonify({"error": f"Error registering user: {str(e)}"}), 500
 

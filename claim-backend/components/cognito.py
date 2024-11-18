@@ -63,45 +63,61 @@ from components.sns import create_sns_topic
 sns_client = boto3.client('sns', region_name='us-east-1')
 import json
 # Register a user (signup with email and password)
-def register_user(client_id, email, password):
+def register_user(client_id, user_pool_id, email, password):
     try:
+        # Register the user
         response = cognito_client.sign_up(
             ClientId=client_id,
-            Username=email,  # Email as the username
+            Username=email,
             Password=password,
-            UserAttributes=[{'Name': 'email', 'Value': email}],  # Only email attribute
+            UserAttributes=[{'Name': 'email', 'Value': email}],
         )
         print(f"User registered successfully: {response}")
-         # After user is registered, subscribe the user to an SNS topic
+
+        # Confirm the user account automatically
+        cognito_client.admin_confirm_sign_up(
+            UserPoolId=user_pool_id,
+            Username=email
+        )
+        print(f"User account confirmed for {email}")
+
+        # Mark the email as verified
+        cognito_client.admin_update_user_attributes(
+            UserPoolId=user_pool_id,
+            Username=email,
+            UserAttributes=[{'Name': 'email_verified', 'Value': 'true'}]
+        )
+        print(f"Email verified for {email}")
+
+        # Subscribe the user to an SNS topic
         user_sub = response['UserSub']
-        topic_name = "ClaimSubmissionTopic"  # You can define a specific topic name here
-        
-        # Get or create the SNS topic
+        topic_name = "ClaimSubmissionTopic"
         sns_topic_arn = create_sns_topic(topic_name)
         
-        # Subscribe the user's email to the SNS topic
         if sns_topic_arn:
             sns_client.subscribe(
                 TopicArn=sns_topic_arn,
                 Protocol='email',
-                Endpoint=email,  # The user's email
+                Endpoint=email,
                 Attributes={
                     'FilterPolicy': json.dumps({
-                        'UserID': [user_sub]  # Filter policy based on the UserSub (UserID)
+                        'UserID': [user_sub]
                     })
                 }
             )
             print(f"User email {email} subscribed to SNS topic: {sns_topic_arn}")
+        
+        # Return user details upon success
         return {
-            'UserSub': response['UserSub'],  # Correct way to access UserSub
-            'Username': email  # Use email as the username
-        }  
+            'UserSub': user_sub,
+            'Username': email
+        }
+
     except ClientError as e:
-        print(f"Error registering user: {e}")
-        # Print full error response for debugging
-        if e.response:
-            print(f"Cognito error response: {e.response['Error']}")
-        return None
+        error_message = e.response['Error']['Message']
+        print(f"ClientError in registering user: {error_message}")
+        # Return the error message to the caller for better debugging
+        return {'error': error_message}
 
 def login_user(client_id, email, password):
     try:

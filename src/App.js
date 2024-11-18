@@ -1,13 +1,13 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'; // Import useNavigate and BrowserRouter
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import NaviBar from './Components/NaviBar';
 import Login from './Components/Auth/Login';
 import Register from './Components/Auth/Register';
 import SubmitClaim from './Components/SubmitClaim';
-import ManageClaims from './Components/ManageClaims'; // Import the ManageClaims component
+import ManageClaims from './Components/ManageClaims';
 import ForgotPassword from './Components/Auth/ForgotPassword';
+import ProtectedRoute from './Components/ProtectedRoute';
 
-// Main App component that renders the navigation and routes
 function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -18,27 +18,32 @@ function App() {
   );
 }
 
-// This component is wrapped inside the BrowserRouter
 const AppWithRouter = () => {
-  const navigate = useNavigate(); // Use useNavigate inside this component
+  const navigate = useNavigate();
 
   return (
     <div>
-      <NaviBar navigate={navigate} /> {/* Pass navigate function as prop */}
+      <NaviBar navigate={navigate} />
       <Routes>
-        {/* Home route (the page shown when user first lands) */}
-        <Route path="/" element={<SubmitClaim />} /> {/* Will show the submit claim intro page initially */}
+        {/* Protected Routes */}
+        <Route path="/submit-claim" element={
+          <ProtectedRoute>
+            <SubmitClaim />
+          </ProtectedRoute>
+        } />
+        <Route path="/manage-claims" element={
+          <ProtectedRoute>
+            <ManageClaims />
+          </ProtectedRoute>
+        } />
 
-        {/* SubmitClaim Route */}
-        <Route path="/submit-claim" element={<SubmitClaim />} /> {/* Submit Claim form page */}
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* Manage Claims Route */}
-        <Route path="/manage-claims" element={<ManageClaims />} /> {/* Manage Claims page */}
-
-        {/* Authentication Routes */}
-        <Route path="/login" element={<Login />} /> {/* Login page */}
-        <Route path="/register" element={<Register />} /> {/* Register page */}
-        <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Forgot Password page */}
+        {/* Redirect root path to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
   );
