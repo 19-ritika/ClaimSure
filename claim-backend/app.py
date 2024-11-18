@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from Routes.cognito_routes import cognito_routes
 from Routes.claim_routes import claim_routes
@@ -9,7 +9,7 @@ from components.lambda_fun import create_lambda_function
 from components.sns import create_sns_topic
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 # Enable Cross-Origin Resource Sharing (CORS)
 CORS(app)
@@ -44,11 +44,14 @@ else:
 
 create_event_source_mapping("claimsure-email-report", "ClaimsTable")
 
-
-
 # Register Cognito and Claim routes
 app.register_blueprint(cognito_routes, url_prefix='/auth')
 app.register_blueprint(claim_routes, url_prefix='/claims')
 
+# Serve files from the static folder
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
