@@ -10,7 +10,7 @@ from components.sns import create_sns_topic
 import os
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='build', static_url_path='/static')
+app = Flask(__name__, static_folder='build/static', static_url_path='/static')
 
 # Enable Cross-Origin Resource Sharing (CORS)
 CORS(app)
