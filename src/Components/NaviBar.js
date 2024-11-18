@@ -15,7 +15,7 @@ const NaviBar = ({ navigate }) => {
   return (
     <div className="navbar">
       <div className="logo">
-        <h1>Claim <span styel = {{color: 'red'}}>Sure</span></h1>
+        <h1>Claim <span styel = {{color: 'yellow'}}>Sure</span></h1>
       </div>
       <div className="tabs">
         <button onClick={() => navigate('/submit-claim')}>Submit Claim</button>
