@@ -7,9 +7,10 @@ from components.dynamoDB import create_table, create_event_source_mapping  # Imp
 from components.s3 import create_s3_bucket
 from components.lambda_fun import create_lambda_function
 from components.sns import create_sns_topic
+import os
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder='build')
 
 # Enable Cross-Origin Resource Sharing (CORS)
 CORS(app)
@@ -48,10 +49,14 @@ create_event_source_mapping("claimsure-email-report", "ClaimsTable")
 app.register_blueprint(cognito_routes, url_prefix='/auth')
 app.register_blueprint(claim_routes, url_prefix='/claims')
 
-# Serve files from the static folder
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory(app.static_folder, filename)
+# Serve React static files
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react_app(path):
+    if path != "" and os.path.exists(f"build/{path}"):
+        return send_from_directory('build', path)
+    else:
+        return send_from_directory('build', 'index.html')
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)
