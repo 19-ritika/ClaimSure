@@ -10,7 +10,7 @@ from components.sns import create_sns_topic
 import os
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='build')
+app = Flask(__name__, static_folder='build', static_url_path='')
 
 # Enable Cross-Origin Resource Sharing (CORS)
 CORS(app)
@@ -53,10 +53,12 @@ app.register_blueprint(claim_routes, url_prefix='/claims')
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_react_app(path):
-    if path != "" and os.path.exists(f"build/{path}"):
-        return send_from_directory('build', path)
+    # If the requested path exists in the build directory, serve it
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
     else:
-        return send_from_directory('build', 'index.html')
+        # Otherwise, serve the index.html for all other requests (SPA behavior)
+        return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)
