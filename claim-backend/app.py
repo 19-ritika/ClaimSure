@@ -9,8 +9,8 @@ from components.lambda_fun import create_lambda_function
 from components.sns import create_sns_topic
 import os
 
-# Initialize Flask app
-app = Flask(__name__, static_folder='build/static', static_url_path='/static')
+# Initialize Flask app to build static files
+app = Flask(__name__, static_folder='build')
 
 # Enable Cross-Origin Resource Sharing (CORS)
 CORS(app)
