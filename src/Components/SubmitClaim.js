@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SubmitClaim.css';
 
+// function for form related data
 const SubmitClaim = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [claimTitle, setClaimTitle] = useState('');
@@ -13,13 +14,13 @@ const SubmitClaim = () => {
 
   const BASE_URI = process.env.NODE_ENV === 'development'
     ? 'http://localhost:5000'
-    : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com';  // Replace with your LB DNS or appropriate URL
+    : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com';  
 
-  // Handle file change
+  // function for handling file change
   const handleFileChange = (e) => {
     const newFile = e.target.files[0];
 
-    // If file size exceeds 50MB, alert the user
+    // If file size is greater than 50MB, inform  user
     if (newFile && newFile.size > 50 * 1024 * 1024) {
       alert("File size exceeds 50MB. Please upload a smaller file.");
       return;
@@ -28,17 +29,18 @@ const SubmitClaim = () => {
     setFile(newFile);
   };
 
-  // Handle form submission
+  // function for handling form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // function for identify logged in user from the local storage
     const userId = localStorage.getItem('user_id');
     if (!userId) {
       alert("User ID not found. Please log in again.");
       return;
     }
 
-    // Prepare the form data, including the file if it exists
+    // Prepare the data for the form to be sent to backend
     const formData = new FormData();
     formData.append('user_id', userId);
     formData.append('claimTitle', claimTitle);
@@ -48,13 +50,13 @@ const SubmitClaim = () => {
       formData.append('file', file);
     }
 
-    setUploading(true);  // Indicate that submission is in progress
+    setUploading(true);  
 
     try {
       // Submit the claim data and file to the backend
       const response = await fetch(`${BASE_URI}/claims/submit-claim`, {
         method: 'POST',
-        body: formData,  // Do not set 'Content-Type', let the browser handle it
+        body: formData,  
       });
 
       const data = await response.json();
@@ -69,11 +71,12 @@ const SubmitClaim = () => {
       console.error("Error submitting claim:", error);
       alert("An error occurred while submitting the claim.");
     } finally {
-      setUploading(false);  // Reset uploading status
+      setUploading(false);  
     }
   };
 
   return (
+    // html components for home page and submit claims form
     <div className="submit-claim-container">
       {!isFormVisible ? (
         <div className="intro-text">

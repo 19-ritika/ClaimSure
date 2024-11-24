@@ -1,36 +1,39 @@
 import React, { useState } from 'react';
-import './Register.css';  // Import the CSS file
+import './Register.css';  
 import { Link } from 'react-router-dom';
 
-const Register = () => {
+//Defining the components for register function
+const Register = () => {     
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [userSub, setUserSub] = useState('');  // State to store UserSub
-  const [username, setUsername] = useState('');  // State to store Username (email)
+  const [userSub, setUserSub] = useState('');  
+  const [username, setUsername] = useState('');  
 
-  // Determine the base URL for the backend
+  // setting up base URL for the backend
   const baseURL = process.env.REACT_APP_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com');
-
+  
+  // Function runs when user submits form
   const handleRegister = async (e) => {
     e.preventDefault();
     console.log('Registering:', { email, password });
 
+    // Sending the email and password to backend
     const response = await fetch(`${baseURL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password })  // Send only email and password
+      body: JSON.stringify({ email, password })  
     });
 
     const data = await response.json();
 
     if (response.ok) {
       setMessage(data.message);
-      setUserSub(data.UserSub);  // Set the UserSub (user ID)
-      setUsername(data.Username);  // Set the Username (email)
+      setUserSub(data.UserSub);  
+      setUsername(data.Username);  
       setError('');
     } else {
       setError(data.error);
@@ -39,6 +42,7 @@ const Register = () => {
   };
 
   return (
+    // html for register page
     <div className="container">
       <h2>Register</h2>
       <form onSubmit={handleRegister}>

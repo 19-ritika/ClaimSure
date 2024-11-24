@@ -1,47 +1,49 @@
 import React, { useState } from 'react';
-import './Login.css';  // Import the CSS file
-import { Link, useNavigate } from 'react-router-dom';  // Use useNavigate instead of useHistory
+import './Login.css';  
+import { Link, useNavigate } from 'react-router-dom';  
 
+// function for login component
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [error, setError] = useState('');  // To store any error message
-  const navigate = useNavigate();  // Initialize useNavigate hook for redirection
+  const [error, setError] = useState('');  
+  const navigate = useNavigate();  
 
-  // Determine the base URL for the backend
+  // setting up the base URL for the backend
   const baseURL = process.env.REACT_APP_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com');
 
+  // function for login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
     console.log('Logging in:', { email, password });
     
     try {
-      // Send credentials to the backend for authentication
+      // sending login related data to backend
       const response = await fetch(`${baseURL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password })  // Send email instead of username
+        body: JSON.stringify({ email, password })  
       });
     
       const data = await response.json();
     
       if (response.ok) {
-        // If login is successful, store user_id and tokens in local storage
+        
         const { message, tokens, user_id } = data;
         
-        console.log('user_id:', user_id);  // Ensure user_id is correctly retrieved
-        localStorage.setItem('user_id', user_id);  // Store user_id locally
-        localStorage.setItem('auth_tokens', JSON.stringify(tokens));  // Store tokens for later use
+        console.log('user_id:', user_id);  
+        localStorage.setItem('user_id', user_id);  
+        localStorage.setItem('auth_tokens', JSON.stringify(tokens));  
   
-        // If login is successful, redirect to /submit-claim
+        // successful login, redirecting to /submit-claim
         setMessage(message);
         setError('');
-        navigate('/submit-claim');  // Use navigate to redirect after successful login
+        navigate('/submit-claim'); 
       } else {
-        // If login fails, show error message
+        
         setError(data.error);
         setMessage('');
       }
@@ -52,6 +54,7 @@ const Login = () => {
   };
 
   return (
+    //html for login page
     <div className="container">
       <h2>Login</h2>
       <form onSubmit={handleLogin}>

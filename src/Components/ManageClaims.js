@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import './ManageClaim.css';
 
 const ManageClaims = () => {
+  // Function for managing claims: storing claims, load status, errors, and data for editing
   const [claims, setClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingClaim, setEditingClaim] = useState(null);
   const [editedData, setEditedData] = useState({});
+  
+  // State to hold count of claims due in the next 30 days
+  const [dueClaimsCount, setDueClaimsCount] = useState(null);
 
   const claimTypes = [
     { value: '', label: 'Select Claim Type' },
@@ -17,9 +21,10 @@ const ManageClaims = () => {
     { value: 'property', label: 'Property' },
   ];
 
-  // Determine the base URL for the backend
+  // Base URL for the backend based on the environment
   const baseURL = process.env.REACT_APP_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'http://claim-lb-2074056079.us-east-1.elb.amazonaws.com');
 
+  // hook to fetch claims data (no changes)
   useEffect(() => {
     const fetchClaims = async () => {
       const userId = localStorage.getItem('user_id');
@@ -46,8 +51,35 @@ const ManageClaims = () => {
     };
 
     fetchClaims();
-  }, []);
+  }, []); // Empty dependency array to run only once
 
+  // hook to fetch claims due in the next 30 days
+  useEffect(() => {
+    const fetchClaimsDueCount = async () => {
+      const userId = localStorage.getItem('user_id');
+      if (!userId) {
+        setError("User ID not found. Please log in.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${baseURL}/claims/count-due?user_id=${userId}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setDueClaimsCount(data.claims_due_in_next_30_days); // Set the claims due count
+        } else {
+          setError(data.error || "Failed to fetch due claims count.");
+        }
+      } catch (error) {
+        setError("An error occurred while fetching due claims count.");
+      }
+    };
+
+    fetchClaimsDueCount();
+  }, []); // Empty dependency array to run only once
+
+  // Function to handle claim deletion
   const handleDelete = async (claimId) => {
     const userId = localStorage.getItem('user_id');
     try {
@@ -66,6 +98,7 @@ const ManageClaims = () => {
     }
   };
 
+  // Function to handle claim edits
   const handleEdit = (claim) => {
     setEditingClaim(claim.ClaimID.S);
     setEditedData({
@@ -75,6 +108,7 @@ const ManageClaims = () => {
     });
   };
 
+  // Save the changes made for claim
   const handleSave = async () => {
     const userId = localStorage.getItem('user_id');
     try {
@@ -105,6 +139,7 @@ const ManageClaims = () => {
     }
   };
 
+  // Cancel edit
   const handleCancel = () => {
     setEditingClaim(null);
     setEditedData({});
@@ -113,6 +148,11 @@ const ManageClaims = () => {
   return (
     <div className="manage-claims-container">
       <h2>Manage Your Claims</h2>
+
+      {/* Display claims due in next 30 days */}
+      {dueClaimsCount !== null && (
+        <p>Claims due in next 30 days: {dueClaimsCount}</p>
+      )}
 
       {loading ? (
         <p>Loading claims...</p>

@@ -90,23 +90,18 @@ def get_lambda_zip_bytes():
 
 
 def create_lambda_function(function_name, role_arn, handler):
-    """
-    Create a Lambda function if it does not exist.
-    
-    :param function_name: The name of the Lambda function.
-    :param role_arn: The ARN of the IAM role that Lambda assumes.
-    :param handler: The Lambda function handler in the form 'filename.function_name'.
-    :return: A message indicating whether the function was created or already exists.
-    """
+    # create a lambda function
     try:
         response = lambda_client.get_function(FunctionName=function_name)
         return f"Lambda function '{function_name}' already exists."
     except ClientError as e:
+        # when the function does not exist
         if e.response['Error']['Code'] == 'ResourceNotFoundException':
-            # Retrieve the zip byte string
+            # retrieve the deployment package (zip file)
             zip_bytes = get_lambda_zip_bytes()
 
-            # Create the Lambda function using the zip bytes
+            # Create the Lambda function using the paramters 
+            #functionname, runtime, role, handler, code, description, timeout and memorysize
             response = lambda_client.create_function(
                 FunctionName=function_name,
                 Runtime='python3.8',  # Adjust to the correct runtime

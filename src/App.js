@@ -8,6 +8,7 @@ import ManageClaims from './Components/ManageClaims';
 import ForgotPassword from './Components/Auth/ForgotPassword';
 import ProtectedRoute from './Components/ProtectedRoute';
 
+// main app component
 function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -18,10 +19,12 @@ function App() {
   );
 }
 
+// routing logic
 const AppWithRouter = () => {
   const navigate = useNavigate();
 
   return (
+    // html components with protect routes to only allow logged in users 
     <div>
       <NaviBar navigate={navigate} />
       <Routes>
@@ -37,7 +40,7 @@ const AppWithRouter = () => {
           </ProtectedRoute>
         } />
 
-        {/* Public Routes */}
+        {/* public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

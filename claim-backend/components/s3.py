@@ -2,20 +2,14 @@ import boto3
 from botocore.exceptions import ClientError
 from werkzeug.utils import secure_filename
 
-# Initialize an S3 client for the 'us-east-1' region
+# Initialize an S3 client 
 s3_client = boto3.client('s3', region_name='us-east-1')
 
-bucket_name = "claimsure-app-bucket-cpp"
+bucket_name = "claimsure-app-bucket-cpp" #defining the bucket name
 
 
 def create_s3_bucket(bucket_name, region=None):
-    """
-    Create an S3 bucket if it does not exist.
-   
-    :param bucket_name: The name of the bucket to create.
-    :param region: The region to create the bucket in (default is us-east-1).
-    :return: A message indicating whether the bucket was created or already exists.
-    """
+    # function to create s3 bucket using parameters bucket, createbucketconfiguration
     try:
         # Check if the bucket already exists
         s3_client.head_bucket(Bucket=bucket_name)
@@ -31,7 +25,7 @@ def create_s3_bucket(bucket_name, region=None):
                 s3_client.create_bucket(
                     Bucket=bucket_name,
                     CreateBucketConfiguration={
-                        'LocationConstraint': region
+                        'LocationConstraint': region #specify region for bucket
                     }
                 )
             return f"Bucket '{bucket_name}' created successfully."
@@ -40,11 +34,11 @@ def create_s3_bucket(bucket_name, region=None):
 
 def upload_file_to_s3(user_id, claim_id, file):
     try:
-        # Secure the filename and create a unique file key
+        # secure the filename and create a unique file key
         filename = secure_filename(file.filename)
         file_key = f"{user_id}/{claim_id}/{filename}"
 
-        # Upload the file to the S3 bucket
+        # function to Upload the file to the S3 bucket
         s3_client.upload_fileobj(file, bucket_name, file_key)
 
         # Construct the file URL

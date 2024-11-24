@@ -1,18 +1,18 @@
-// NaviBar.js
 import React from 'react';
-import './NaviBar.css';  // Import the CSS for the navigation bar
+import './NaviBar.css';  
 
+// main nav bar function
 const NaviBar = ({ navigate }) => {
   const handleLogout = () => {
-    // Clear localStorage (remove auth tokens and user_id)
+    // clear stored user data stored from local storage
     localStorage.removeItem('auth_tokens');
     localStorage.removeItem('user_id');
 
-    // Redirect to login page after logout
     navigate('/login');
   };
 
   return (
+    // function for nav bar which has buttons for submit, manage claims and logout
     <div className="navbar">
       <div className="logo">
         <h1>ClaimSure</h1>

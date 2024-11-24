@@ -2,11 +2,11 @@ import boto3
 from botocore.exceptions import ClientError
 
 # Initialize the SNS client
-sns_client = boto3.client('sns', region_name='us-east-1')  # Adjust the region as needed
+sns_client = boto3.client('sns', region_name='us-east-1')  
 
 def create_sns_topic(topic_name):
     try:
-        # Check if the topic already exists by listing all topics
+        # check if the topic already exists by listing all topics
         existing_topics = sns_client.list_topics()
         
         # Look for the topic in the list of existing topics
@@ -18,12 +18,12 @@ def create_sns_topic(topic_name):
                 print(f"SNS topic '{topic_name}' already exists with ARN: {arn}")
                 return arn
 
-        # If the topic doesn't exist, create it
+        # function to create sns topic if the topic doesn't exist using parameters name
         response = sns_client.create_topic(
             Name=topic_name
         )
         
-        # Extract the ARN of the newly created topic
+        # extract the ARN of the newly created topic
         topic_arn = response['TopicArn']
         print(f"SNS topic '{topic_name}' created successfully with ARN: {topic_arn}")
         return topic_arn
